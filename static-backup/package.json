@@ -1,0 +1,17 @@
+{
+  "name": "dise-website",
+  "version": "1.0.0",
+  "description": "Darul Irshad School of Excellence Website",
+  "main": "dev-server.js",
+  "scripts": {
+    "start": "node dev-server.js",
+    "dev": "node dev-server.js"
+  },
+  "keywords": [
+    "dise",
+    "school",
+    "excellence"
+  ],
+  "author": "Darul Irshad School of Excellence",
+  "license": "ISC"
+}
