@@ -8,7 +8,6 @@
     "start": "next start"
   },
   "dependencies": {
-    "lightningcss-win32-x64-msvc": "^1.32.0",
     "mongodb": "^7.3.0",
     "next": "15.5.19",
     "react": "19.1.0",
