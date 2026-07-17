@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "lightningcss-win32-x64-msvc": "^1.32.0",
     "mongodb": "^7.3.0",
     "next": "15.5.19",
     "react": "19.1.0",
@@ -19,6 +20,6 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "5.8.2"
   }
 }
