@@ -43,7 +43,7 @@ export default function Hero({ onOpenApply }: HeroProps) {
           
           <div className="hero-ctas">
             <button className="btn btn-accent" onClick={onOpenApply}>Apply Now</button>
-            <a href="#contact" className="btn btn-outline" onClick={handleContactClick}>Contact Us</a>
+            <a href="#contact" className="btn btn-outline-blue" onClick={handleContactClick}>Contact Us</a>
           </div>
         </div>
 
