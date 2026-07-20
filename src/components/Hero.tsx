@@ -20,14 +20,9 @@ export default function Hero({ onOpenApply }: HeroProps) {
 
   return (
     <section id="hero" className="hero-section">
-      <div className="hero-pattern"></div>
       <div className="hero-overlay"></div>
       <div className="container hero-container">
         <div className="hero-content animate-on-scroll slide-up">
-          {/* Logo at Top of Hero */}
-          <div className="hero-logo-wrapper">
-            <img src="/Artboard 1e3.png" alt="DISE Logo" className="logo-img" style={{ height: '80px', width: 'auto', objectFit: 'contain' }} />
-          </div>
           
           <div className="hero-badge">
             <span className="animate-blink"></span> Admissions Open for 2026-27
