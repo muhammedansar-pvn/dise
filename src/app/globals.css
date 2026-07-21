@@ -497,7 +497,9 @@ footer .logo-link svg {
 
 .hero-section h1 {
   font-size: 3.5rem;
-  color: var(--color-primary-dark);
+  background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   font-weight: 800;
   line-height: 1.15;
   margin-bottom: 20px;
@@ -506,8 +508,123 @@ footer .logo-link svg {
 }
 
 .hero-section h1 span {
-  color: var(--color-primary);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   display: block;
+}
+
+/* Ambient Background Glows */
+.hero-glow-blue {
+  position: absolute;
+  top: 10%;
+  right: 5%;
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(circle, rgba(30, 107, 230, 0.08) 0%, transparent 70%);
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hero-glow-gold {
+  position: absolute;
+  bottom: 10%;
+  left: 5%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(246, 196, 0, 0.06) 0%, transparent 70%);
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Subtle dot grid pattern */
+.hero-dot-grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(#94a3b8 1px, transparent 1px);
+  background-size: 24px 24px;
+  opacity: 0.06;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Floating Glassmorphism Cards */
+.floating-card {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: var(--radius-sm);
+  padding: 12px 18px;
+  box-shadow: 0 10px 25px -5px rgba(13, 78, 163, 0.05), 0 8px 10px -6px rgba(13, 78, 163, 0.05);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 10;
+  pointer-events: none;
+  transition: all var(--transition-normal);
+}
+
+.floating-card.card-left {
+  top: 12%;
+  left: -40px;
+  animation: float-slow 6s ease-in-out infinite;
+}
+
+.floating-card.card-right {
+  bottom: 15%;
+  right: -30px;
+  animation: float-fast 5s ease-in-out infinite;
+}
+
+.floating-card-icon {
+  width: 32px;
+  height: 32px;
+  background-color: rgba(13, 78, 163, 0.08);
+  border-radius: 6px;
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.floating-card-text {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  line-height: 1.2;
+}
+
+.floating-card-sub {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+@keyframes float-slow {
+  0%, 100% {
+    transform: translateY(0) rotate(-1deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(1deg);
+  }
+}
+
+@keyframes float-fast {
+  0%, 100% {
+    transform: translateY(0) rotate(1deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(-1deg);
+  }
 }
 
 .hero-tagline {
