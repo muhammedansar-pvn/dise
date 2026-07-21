@@ -30,7 +30,7 @@ export default function Hero({ onOpenApply }: HeroProps) {
         <div className="hero-content animate-on-scroll slide-up">
           
           <div className="hero-badge">
-            <span className="animate-blink"></span> Admissions Open for 2026-27
+            <span className="pulse-dot" style={{ marginRight: '8px' }}></span> Admissions Open for 2026-27
           </div>
           
           <h1>
@@ -42,15 +42,19 @@ export default function Hero({ onOpenApply }: HeroProps) {
           </p>
           
           <div className="hero-ctas">
-            <button className="btn btn-accent" onClick={onOpenApply}>Apply Now</button>
+            <button className="btn btn-accent btn-pulse" onClick={onOpenApply}>Apply Now</button>
             <a href="#contact" className="btn btn-outline-blue" onClick={handleContactClick}>Contact Us</a>
           </div>
         </div>
 
-        {/* Right Side: Graphic Emblem with Floating Glassmorphism Cards */}
+        {/* Right Side: Graphic Emblem with Floating Glassmorphism Cards & Orbit Rings */}
         <div className="hero-visual animate-on-scroll fade-in delay-200">
           <div className="emblem-wrapper">
             <div className="emblem-bg-glow"></div>
+            
+            {/* Spinning Orbit Rings for Modern Tech-Academic Feel */}
+            <div className="emblem-ring-outer"></div>
+            <div className="emblem-ring-inner"></div>
             
             {/* Floating Card 1: Program Detail */}
             <div className="floating-card card-left">
