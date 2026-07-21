@@ -822,7 +822,39 @@ footer .logo-link svg {
   }
 
   .hero-visual {
-    display: none;
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
+  }
+
+  .emblem-wrapper {
+    width: 290px;
+    height: 290px;
+  }
+
+  .floating-card.card-left {
+    left: -20px;
+    top: 10%;
+    padding: 10px 14px;
+  }
+
+  .floating-card.card-right {
+    right: -15px;
+    bottom: 10%;
+    padding: 10px 14px;
+  }
+
+  .floating-card-icon {
+    width: 30px;
+    height: 30px;
+  }
+
+  .floating-card-text {
+    font-size: 0.8rem;
+  }
+
+  .floating-card-sub {
+    font-size: 0.68rem;
   }
 }
 
@@ -836,6 +868,23 @@ footer .logo-link svg {
   }
   .hero-tagline {
     font-size: 1.1rem;
+  }
+  
+  .emblem-wrapper {
+    width: 230px;
+    height: 230px;
+  }
+
+  .floating-card.card-left {
+    left: -10px;
+    top: 6%;
+    padding: 8px 12px;
+  }
+
+  .floating-card.card-right {
+    right: -8px;
+    bottom: 6%;
+    padding: 8px 12px;
   }
 }
 
