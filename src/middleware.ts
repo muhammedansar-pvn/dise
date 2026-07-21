@@ -11,10 +11,8 @@ export async function middleware(request: NextRequest) {
     const isValid = await verifySession(sessionToken);
 
     if (!isValid) {
-      const loginUrl = request.nextUrl.clone();
-      loginUrl.pathname = '/admin/login';
-      // Store the attempted path to redirect back after login if desired, or redirect cleanly
-      return NextResponse.redirect(loginUrl);
+      // Use clean standard absolute URL to redirect, avoiding Vercel internal proxy routing conflicts
+      return NextResponse.redirect(new URL('/admin/login', request.url));
     }
   }
 
