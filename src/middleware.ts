@@ -35,6 +35,21 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // 3. Guard admin settings modifications (allow GET publicly, protect POST/PATCH)
+  if (pathname.startsWith('/api/admin/settings')) {
+    if (request.method !== 'GET') {
+      const sessionToken = request.cookies.get('admin_session')?.value;
+      const isValid = await verifySession(sessionToken);
+
+      if (!isValid) {
+        return NextResponse.json(
+          { success: false, error: 'Unauthorized administrative access' },
+          { status: 401 }
+        );
+      }
+    }
+  }
+
   return NextResponse.next();
 }
 
@@ -44,5 +59,6 @@ export const config = {
     '/admin/:path*',
     '/api/admissions',
     '/api/admissions/:path*',
+    '/api/admin/settings',
   ],
 };

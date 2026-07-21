@@ -10,6 +10,30 @@ export default function Header({ onOpenApply }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
+  const [isOpen, setIsOpen] = useState(true);
+
+  // Fetch settings to check if admissions are open
+  useEffect(() => {
+    const checkAdmissions = async () => {
+      try {
+        const res = await fetch('/api/admin/settings');
+        const result = await res.json();
+        if (result.success && result.data) {
+          const { startDate, endDate, admissionsEnabled } = result.data;
+          const now = new Date();
+          const start = new Date(startDate);
+          const end = new Date(endDate);
+          now.setHours(0, 0, 0, 0);
+          start.setHours(0, 0, 0, 0);
+          end.setHours(23, 59, 59, 999);
+          setIsOpen(admissionsEnabled && (now >= start && now <= end));
+        }
+      } catch (err) {
+        console.error('Error fetching admissions status for header:', err);
+      }
+    };
+    checkAdmissions();
+  }, []);
 
   // Handle scroll events: Sticky nav background & Scroll Spy active highlighting
   useEffect(() => {
@@ -95,7 +119,18 @@ export default function Header({ onOpenApply }: HeaderProps) {
           <a href="#schedule" className={`nav-link ${activeSection === 'schedule' ? 'active' : ''}`} onClick={(e) => handleLinkClick(e, 'schedule')}>Schedule</a>
           <a href="#contact" className={`nav-link ${activeSection === 'contact' ? 'active' : ''}`} onClick={(e) => handleLinkClick(e, 'contact')}>Contact</a>
           <div className="nav-cta">
-            <button className="btn btn-accent" onClick={onOpenApply}>Apply Now</button>
+            {isOpen ? (
+              <button className="btn btn-accent" onClick={onOpenApply}>Apply Now</button>
+            ) : (
+              <button 
+                className="btn btn-accent" 
+                style={{ backgroundColor: '#94A3B8', cursor: 'not-allowed', opacity: 0.6, boxShadow: 'none' }} 
+                disabled
+                title="Admissions are currently closed"
+              >
+                Closed
+              </button>
+            )}
           </div>
         </nav>
       </div>

@@ -1,12 +1,43 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface HeroProps {
   onOpenApply: () => void;
 }
 
 export default function Hero({ onOpenApply }: HeroProps) {
+  const [settings, setSettings] = useState({
+    startDate: '',
+    endDate: '',
+    academicYear: '2026-27',
+    admissionsEnabled: true,
+  });
+  const [isOpen, setIsOpen] = useState(true);
+
+  useEffect(() => {
+    const checkAdmissions = async () => {
+      try {
+        const res = await fetch('/api/admin/settings');
+        const result = await res.json();
+        if (result.success && result.data) {
+          const data = result.data;
+          setSettings(data);
+          const now = new Date();
+          const start = new Date(data.startDate);
+          const end = new Date(data.endDate);
+          now.setHours(0, 0, 0, 0);
+          start.setHours(0, 0, 0, 0);
+          end.setHours(23, 59, 59, 999);
+          setIsOpen(data.admissionsEnabled && (now >= start && now <= end));
+        }
+      } catch (err) {
+        console.error('Error fetching admissions status for hero:', err);
+      }
+    };
+    checkAdmissions();
+  }, []);
+
   const handleContactClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     const contactSection = document.getElementById('contact');
@@ -29,8 +60,15 @@ export default function Hero({ onOpenApply }: HeroProps) {
       <div className="container hero-container">
         <div className="hero-content animate-on-scroll slide-up">
           
-          <div className="hero-badge">
-            <span className="pulse-dot" style={{ marginRight: '8px' }}></span> Admissions Open for 2026-27
+          <div 
+            className="hero-badge"
+            style={!isOpen ? { background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', color: '#EF4444' } : {}}
+          >
+            <span 
+              className="pulse-dot" 
+              style={{ marginRight: '8px', backgroundColor: isOpen ? '#10B981' : '#EF4444' }}
+            ></span> 
+            {isOpen ? `Admissions Open for ${settings.academicYear}` : 'Admissions Closed'}
           </div>
           
           <h1>
@@ -42,7 +80,18 @@ export default function Hero({ onOpenApply }: HeroProps) {
           </p>
           
           <div className="hero-ctas">
-            <button className="btn btn-accent btn-pulse" onClick={onOpenApply}>Apply Now</button>
+            {isOpen ? (
+              <button className="btn btn-accent btn-pulse" onClick={onOpenApply}>Apply Now</button>
+            ) : (
+              <button 
+                className="btn btn-accent" 
+                style={{ backgroundColor: '#94A3B8', cursor: 'not-allowed', opacity: 0.6, boxShadow: 'none' }} 
+                disabled
+                title="Admissions are currently closed"
+              >
+                Admissions Closed
+              </button>
+            )}
             <a href="#contact" className="btn btn-outline-blue" onClick={handleContactClick}>Contact Us</a>
           </div>
         </div>

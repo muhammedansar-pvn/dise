@@ -32,6 +32,14 @@ export default function AdminDashboard() {
   const [tempAdminNotes, setTempAdminNotes] = useState('');
   const [isUpdatingNotes, setIsUpdatingNotes] = useState(false);
 
+  // Admissions Settings states
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [academicYear, setAcademicYear] = useState('2026-27');
+  const [admissionsEnabled, setAdmissionsEnabled] = useState(true);
+  const [isSavingSettings, setIsSavingSettings] = useState(false);
+  const [settingsError, setSettingsError] = useState<string | null>(null);
+
   // Fetch all applicants from the API
   const fetchApplicants = async () => {
     try {
@@ -51,8 +59,55 @@ export default function AdminDashboard() {
     }
   };
 
+  // Fetch admissions settings
+  const fetchSettings = async () => {
+    try {
+      const res = await fetch('/api/admin/settings');
+      const data = await res.json();
+      if (data.success && data.data) {
+        setStartDate(data.data.startDate || '');
+        setEndDate(data.data.endDate || '');
+        setAcademicYear(data.data.academicYear || '2026-27');
+        setAdmissionsEnabled(data.data.admissionsEnabled ?? true);
+      }
+    } catch (err) {
+      console.error('Error fetching settings:', err);
+    }
+  };
+
+  // Save admissions settings
+  const handleSaveSettings = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSavingSettings(true);
+    setSettingsError(null);
+    try {
+      const res = await fetch('/api/admin/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          startDate,
+          endDate,
+          academicYear,
+          admissionsEnabled,
+        }),
+      });
+      const result = await res.json();
+      if (result.success) {
+        alert('Admissions configuration saved successfully and is now active on the public site!');
+      } else {
+        setSettingsError(result.error || 'Failed to save settings');
+      }
+    } catch (err: any) {
+      setSettingsError('Error connecting to Settings endpoint.');
+      console.error(err);
+    } finally {
+      setIsSavingSettings(false);
+    }
+  };
+
   useEffect(() => {
     fetchApplicants();
+    fetchSettings();
   }, []);
 
   // Update applicant status (Approve, Reject, Pending)
@@ -131,70 +186,7 @@ export default function AdminDashboard() {
     }
   };
 
-  // Seed mock data for easy review
-  const handleSeedMockData = async () => {
-    const mockApplicants = [
-      {
-        studentName: 'Ayoob Rahman C.P.',
-        applyingClass: '8',
-        guardianName: 'Abdul Rahman C.P.',
-        contactPhone: '9845612301',
-        previousSchool: 'Chelembra Secondary School, Malappuram',
-        additionalNotes: 'Completed Hifz of 5 Juzz. Highly active in local sports programs and spiritual classes.',
-      },
-      {
-        studentName: 'Fathima Shamna K.P.',
-        applyingClass: '7',
-        guardianName: 'Muhammed Shafi K.P.',
-        contactPhone: '8129536841',
-        previousSchool: 'Ideal English School, Kuttippala',
-        additionalNotes: 'Secured A-Grade in state-level school Quran recitation and Arabic calligraphy.',
-      },
-      {
-        studentName: 'Salman Faris M.',
-        applyingClass: '8',
-        guardianName: 'Usman Haji M.',
-        contactPhone: '9447385910',
-        previousSchool: 'Kuttippala AMLP School, Malappuram',
-        additionalNotes: 'Requires hostel accommodation. Speaks fluent Arabic, English, and Malayalam.',
-      },
-      {
-        studentName: 'Zainab Binth Noushad',
-        applyingClass: '7',
-        guardianName: 'Noushad Ali',
-        contactPhone: '9656417283',
-        previousSchool: 'Kottakkal Public School, CBSE',
-        additionalNotes: 'Father works in UAE. Mother is the local contact guardian.',
-      },
-      {
-        studentName: 'Rayan K.T.',
-        applyingClass: '8',
-        guardianName: 'Ashraf K.T.',
-        contactPhone: '7012586394',
-        previousSchool: 'Vengara Govt Boys Higher Secondary School',
-        additionalNotes: 'Interested in Islamic academic sciences. Excellent academic record in Mathematics.',
-      }
-    ];
 
-    try {
-      setLoading(true);
-      for (const mock of mockApplicants) {
-        await fetch('/api/admissions', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(mock),
-        });
-      }
-      // Reload list
-      await fetchApplicants();
-      alert('Successfully seeded 5 mock applications.');
-    } catch (err) {
-      console.error(err);
-      alert('Error seeding mock data.');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // Export applicants to CSV
   const handleExportCSV = () => {
@@ -320,12 +312,6 @@ export default function AdminDashboard() {
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <button 
-            onClick={handleSeedMockData} 
-            className="text-xs md:text-sm bg-blue-50 text-blue-700 hover:bg-blue-100 font-semibold px-4 py-2 rounded-lg transition-all duration-200 border border-blue-200 shadow-sm"
-          >
-            Seed Mock Data
-          </button>
           <Link 
             href="/"
             className="text-xs md:text-sm bg-white text-[#475569] hover:text-[#0D4EA3] border border-[#CBD5E1] hover:border-[#0D4EA3] font-semibold px-4 py-2 rounded-lg transition-all duration-200 shadow-sm"
@@ -488,6 +474,80 @@ export default function AdminDashboard() {
           </div>
         )}
 
+        {/* Admissions Date Management Panel */}
+        <div className="bg-white rounded-xl border border-[#E2E8F0] p-6 shadow-sm mb-8">
+          <h3 className="font-heading font-bold text-lg text-[#0F172A] mb-1 flex items-center gap-2">
+            <svg className="w-5 h-5 text-[#0D4EA3]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            Admissions Date & Portal Management
+          </h3>
+          <p className="text-xs text-[#64748B] mb-5">
+            Configure the dates during which student registration is allowed. This updates the "Apply Now" button and status live on the home page.
+          </p>
+
+          {settingsError && (
+            <div className="bg-rose-50 border border-rose-200 text-rose-700 px-4 py-2.5 rounded-lg text-xs mb-4">
+              {settingsError}
+            </div>
+          )}
+
+          <form onSubmit={handleSaveSettings} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+            <div>
+              <label className="block text-xs font-semibold text-[#475569] mb-1.5 uppercase tracking-wider">Start Date</label>
+              <input 
+                type="date" 
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                required
+                className="w-full text-xs md:text-sm bg-[#F8FAFC] border border-[#CBD5E1] rounded-lg px-3 py-2 text-[#0F172A] focus:outline-none focus:border-[#0D4EA3]"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-[#475569] mb-1.5 uppercase tracking-wider">End Date</label>
+              <input 
+                type="date" 
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                required
+                className="w-full text-xs md:text-sm bg-[#F8FAFC] border border-[#CBD5E1] rounded-lg px-3 py-2 text-[#0F172A] focus:outline-none focus:border-[#0D4EA3]"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-[#475569] mb-1.5 uppercase tracking-wider">Academic Year</label>
+              <input 
+                type="text" 
+                value={academicYear}
+                onChange={(e) => setAcademicYear(e.target.value)}
+                required
+                placeholder="e.g. 2026-27"
+                className="w-full text-xs md:text-sm bg-[#F8FAFC] border border-[#CBD5E1] rounded-lg px-3 py-2 text-[#0F172A] focus:outline-none focus:border-[#0D4EA3]"
+              />
+            </div>
+            <div className="flex items-center h-10 gap-2 pb-2">
+              <input 
+                type="checkbox" 
+                id="admissionsEnabled"
+                checked={admissionsEnabled}
+                onChange={(e) => setAdmissionsEnabled(e.target.checked)}
+                className="w-4 h-4 text-[#0D4EA3] border-[#CBD5E1] rounded focus:ring-[#0D4EA3]"
+              />
+              <label htmlFor="admissionsEnabled" className="text-xs font-semibold text-[#475569] cursor-pointer select-none">
+                Admissions Enabled
+              </label>
+            </div>
+            <div>
+              <button 
+                type="submit" 
+                disabled={isSavingSettings}
+                className="w-full text-xs md:text-sm bg-[#0D4EA3] hover:bg-[#062F68] text-white font-bold px-4 py-2.5 rounded-lg transition-all duration-200 border border-[#0D4EA3] shadow-sm flex items-center justify-center gap-1.5"
+              >
+                {isSavingSettings ? 'Saving...' : 'Apply Config'}
+              </button>
+            </div>
+          </form>
+        </div>
+
         {/* Filters and Search controls */}
         <div className="bg-white rounded-xl border border-[#E2E8F0] p-5 shadow-sm mb-6 flex flex-col gap-4">
           <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between">
@@ -594,17 +654,9 @@ export default function AdminDashboard() {
                 <h4 className="font-heading font-bold text-lg text-[#0F172A]">No Applicants Found</h4>
                 <p className="text-[#475569] text-sm mt-1 max-w-md mx-auto">
                   {totalCount === 0 
-                    ? 'No submissions have been registered yet. Use the "Seed Mock Data" button in the header or fill out the inquiry form on the main page to get started.'
+                    ? 'No admissions inquiry submissions have been registered yet. Once public users submit inquiries on the main site, they will automatically appear here.'
                     : 'No applicants match the current search filters. Clear some filter criteria and try again.'}
                 </p>
-                {totalCount === 0 && (
-                  <button 
-                    onClick={handleSeedMockData} 
-                    className="mt-4 bg-[#0D4EA3] text-white hover:bg-[#062F68] font-semibold px-5 py-2.5 rounded-lg text-sm transition-all duration-200 shadow-sm"
-                  >
-                    Seed Sample Applications
-                  </button>
-                )}
               </div>
             ) : (
               <div className="bg-white rounded-2xl border border-[#E2E8F0] shadow-sm overflow-hidden">
