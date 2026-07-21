@@ -10,7 +10,7 @@ export default function Header({ onOpenApply }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState<boolean | null>(null);
 
   // Fetch settings to check if admissions are open
   useEffect(() => {
@@ -27,9 +27,12 @@ export default function Header({ onOpenApply }: HeaderProps) {
           start.setHours(0, 0, 0, 0);
           end.setHours(23, 59, 59, 999);
           setIsOpen(admissionsEnabled && (now >= start && now <= end));
+        } else {
+          setIsOpen(false);
         }
       } catch (err) {
         console.error('Error fetching admissions status for header:', err);
+        setIsOpen(false);
       }
     };
     checkAdmissions();
@@ -119,7 +122,9 @@ export default function Header({ onOpenApply }: HeaderProps) {
           <a href="#schedule" className={`nav-link ${activeSection === 'schedule' ? 'active' : ''}`} onClick={(e) => handleLinkClick(e, 'schedule')}>Schedule</a>
           <a href="#contact" className={`nav-link ${activeSection === 'contact' ? 'active' : ''}`} onClick={(e) => handleLinkClick(e, 'contact')}>Contact</a>
           <div className="nav-cta">
-            {isOpen ? (
+            {isOpen === null ? (
+              <button className="btn btn-accent" style={{ opacity: 0.8, cursor: 'wait' }} disabled>Checking...</button>
+            ) : isOpen ? (
               <button className="btn btn-accent" onClick={onOpenApply}>Apply Now</button>
             ) : (
               <button 

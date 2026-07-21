@@ -13,7 +13,7 @@ export default function Hero({ onOpenApply }: HeroProps) {
     academicYear: '2026-27',
     admissionsEnabled: true,
   });
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState<boolean | null>(null);
 
   useEffect(() => {
     const checkAdmissions = async () => {
@@ -30,9 +30,12 @@ export default function Hero({ onOpenApply }: HeroProps) {
           start.setHours(0, 0, 0, 0);
           end.setHours(23, 59, 59, 999);
           setIsOpen(data.admissionsEnabled && (now >= start && now <= end));
+        } else {
+          setIsOpen(false);
         }
       } catch (err) {
         console.error('Error fetching admissions status for hero:', err);
+        setIsOpen(false);
       }
     };
     checkAdmissions();
@@ -60,16 +63,22 @@ export default function Hero({ onOpenApply }: HeroProps) {
       <div className="container hero-container">
         <div className="hero-content animate-on-scroll slide-up">
           
-          <div 
-            className="hero-badge"
-            style={!isOpen ? { background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', color: '#EF4444' } : {}}
-          >
-            <span 
-              className="pulse-dot" 
-              style={{ marginRight: '8px', backgroundColor: isOpen ? '#10B981' : '#EF4444' }}
-            ></span> 
-            {isOpen ? `Admissions Open for ${settings.academicYear}` : 'Admissions Closed'}
-          </div>
+          {isOpen === null ? (
+            <div className="hero-badge" style={{ background: 'rgba(148, 163, 184, 0.1)', border: '1px solid rgba(148, 163, 184, 0.3)', color: '#64748B' }}>
+              <span className="animate-pulse" style={{ display: 'inline-block', width: '8px', height: '8px', backgroundColor: '#64748B', borderRadius: '50%', marginRight: '8px' }}></span> 
+              Checking Admissions...
+            </div>
+          ) : isOpen ? (
+            <div className="hero-badge">
+              <span className="pulse-dot" style={{ marginRight: '8px', backgroundColor: '#10B981' }}></span> 
+              Admissions Open for {settings.academicYear}
+            </div>
+          ) : (
+            <div className="hero-badge" style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', color: '#EF4444' }}>
+              <span className="pulse-dot" style={{ marginRight: '8px', backgroundColor: '#EF4444' }}></span> 
+              Admissions Closed
+            </div>
+          )}
           
           <h1>
             Darul Irshad School<span>of Excellence (DISE)</span>
@@ -80,7 +89,9 @@ export default function Hero({ onOpenApply }: HeroProps) {
           </p>
           
           <div className="hero-ctas">
-            {isOpen ? (
+            {isOpen === null ? (
+              <button className="btn btn-accent" style={{ opacity: 0.8, cursor: 'wait' }} disabled>Checking...</button>
+            ) : isOpen ? (
               <button className="btn btn-accent btn-pulse" onClick={onOpenApply}>Apply Now</button>
             ) : (
               <button 
