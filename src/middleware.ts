@@ -6,7 +6,7 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // 1. Guard all pages inside /admin (except /admin/login)
-  if (pathname.startsWith('/admin') && pathname !== '/admin/login') {
+  if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) {
     const sessionToken = request.cookies.get('admin_session')?.value;
     const isValid = await verifySession(sessionToken);
 
