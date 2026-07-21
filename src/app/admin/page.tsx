@@ -241,6 +241,24 @@ export default function AdminDashboard() {
     document.body.removeChild(link);
   };
 
+  // Log out of admin panel
+  const handleLogout = async () => {
+    if (!confirm('Are you sure you want to log out of the admin panel?')) return;
+    try {
+      const res = await fetch('/api/admin/logout', {
+        method: 'POST',
+      });
+      if (res.ok) {
+        window.location.href = '/admin/login';
+      } else {
+        alert('Failed to log out.');
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Network error during logout.');
+    }
+  };
+
   // Calculate statistics
   const totalCount = applicants.length;
   const pendingCount = applicants.filter(app => app.status === 'Pending').length;
@@ -314,6 +332,12 @@ export default function AdminDashboard() {
           >
             Back to Site
           </Link>
+          <button
+            onClick={handleLogout}
+            className="text-xs md:text-sm bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 hover:border-red-300 font-semibold px-4 py-2 rounded-lg transition-all duration-200 shadow-sm"
+          >
+            Logout
+          </button>
         </div>
       </header>
 
